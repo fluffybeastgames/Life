@@ -2,9 +2,10 @@
 # Each line of the string represent a single row on the board, with 1 === alive and 0 === dead
 # Expected format is a multiline string, where the first line is discarded and subsequent lines begin with no indentation. Place the end quotes on their own, otherwise empty line.
 
-def get_seed(seed_desc):
-    if seed_desc == 'Pulsar':
-        return '''
+dict_seeds = {} # Potentially more complex combos of pieces. Selecting one completely resets the simulation
+dict_entities = {} # Pieces that can be added to an existing simulation by the user
+
+dict_seeds['Pulsars'] = '''
 0000000000000000000000000000000
 0000000000000000000000000000000
 0000111000111000000011100011100
@@ -21,8 +22,8 @@ def get_seed(seed_desc):
 0000000000000000000000000000000
 0000111000111000000011100011100
 '''
-    elif seed_desc == 'Penta-decathlon':
-        return '''
+
+dict_seeds['Penta-decathlons'] = '''
 000000000000000000000000000000000000000
 000000000000000000000000000000000000000
 000000000000000000000000000000000000000
@@ -41,9 +42,7 @@ def get_seed(seed_desc):
 000000111000000000011100000000001110000
 '''
 
-def get_entity(entity_desc):
-    if entity_desc == 'Pulsar':
-        return '''
+dict_entities['Pulsar'] = '''
 0011100011100
 0000000000000
 1000010100001
@@ -58,12 +57,64 @@ def get_entity(entity_desc):
 0000000000000
 0011100011100
 '''  
-    elif entity_desc == 'R-pentomino':
-        return '''
+
+dict_entities['R-pentomino'] = '''
 0110
 1100
 0100
 '''
-    elif entity_desc == '':
-        return '''
+
+dict_entities['Cloverleaf'] = '''
+000101000
+011101110
+100010001
+101000101
+011010110
+000000000
+011010110
+101000101
+100010001
+011101110
+000101000
+'''
+
+dict_entities['Glider'] = '''
+001
+101
+011
+'''
+
+dict_entities['LWSS'] = '''
+01111
+10001
+00001
+10010
+'''
+
+dict_entities['MWSS'] = '''
+001000
+100010
+000001
+100001
+011111
+'''
+
+dict_entities['HWSS'] = '''
+0011000
+1000010
+0000001
+1000001
+0111111
+'''
+
+dict_entities['Gosper Glider Gun'] = '''
+000000000000000000000000100000000000
+000000000000000000000010100000000000
+000000000000110000001100000000000011
+000000000001000100001100000000000011
+110000000010000010001100000000000000
+110000000010001011000010100000000000
+000000000010000010000000100000000000
+000000000001000100000000000000000000
+000000000000110000000000000000000000
 '''

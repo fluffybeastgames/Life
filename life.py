@@ -66,7 +66,6 @@ class LifeGame:
                     messagebox.showerror(title='Out of Range', message='Not enough room to place object!')        
             
             else:
-                
                 self.toggle_cell_value()
 
         def toggle_cell_value(self):
@@ -74,12 +73,11 @@ class LifeGame:
             bg = '#000000' if self.alive  else '#FFFFFF'
             self.button.config(bg=bg)
 
-
         def get_neighbor_count(self):
             r = self.row
             c = self.col
             neighbors = [(r-1, c-1), (r-1, c), (r-1, c+1), (r, c-1), (r, c+1), (r+1, c-1), (r+1, c), (r+1, c+1)]
-            
+
             count = 0
             for n in neighbors:
                 if n[0]>=0 and n[0]<self.parent.rows and n[1]>=0 and n[1]<self.parent.cols and self.parent.board[n[0]][n[1]].alive: count += 1
@@ -146,11 +144,10 @@ class LifeGame:
             self.btn_start_pause.grid(row=0, column=1, padx=10)
             self.btn_reset.grid(row=0, column=2, padx=10)
             self.btn_clear.grid(row=0, column=3, padx=10)
-            self.lbl_pending_insert.grid(row=1, column=0, columnspan=3, padx=10)
-            
             lbl_slider_speed.grid(row=0, column=4, padx=(10,0))
             self.slider_speed.grid(row=0, column=5, padx=(0,10))
-            
+            self.lbl_pending_insert.grid(row=1, column=1, columnspan=6, padx=10)
+
             self.controls_frame.grid(row=0, column=0, padx=30, pady=30)        
             self.frame_board.grid(row=1, column=0, padx=30, pady=(0,30))
 
@@ -170,24 +167,15 @@ class LifeGame:
             
             open_menu = tk.Menu(file_menu, tearoff=0)
             file_menu.add_cascade(label='Open Seed', menu=open_menu)
-            open_menu.add_command(label='Pulsar', command=partial(self.parent.seed_game, 'Pulsar'))
-            open_menu.add_command(label='Penta-decathlon', command=partial(self.parent.seed_game, 'Penta-decathlon'))
-            # open_menu.add_command(label='', command=partial(self.parent.seed_game, ''))
-            # open_menu.add_command(label='', command=partial(self.parent.seed_game, ''))
-            # open_menu.add_command(label='', command=partial(self.parent.seed_game, ''))
-            # open_menu.add_command(label='', command=partial(self.parent.seed_game, ''))
-            # open_menu.add_command(label='', command=partial(self.parent.seed_game, ''))
-            # open_menu.add_command(label='', command=partial(self.parent.seed_game, ''))
 
+            for i in ss.dict_seeds.keys():
+                open_menu.add_command(label=i, command=partial(self.parent.seed_game, i))
+            
             insert_menu = tk.Menu(file_menu, tearoff=0)
             file_menu.add_cascade(label='Insert', menu=insert_menu)
-            insert_menu.add_command(label='Pulsar', command=partial(self.parent.add_pending_insert, 'Pulsar'))
-            insert_menu.add_command(label='R-pentomino', command=partial(self.parent.add_pending_insert, 'R-pentomino'))
-            # insert_menu.add_command(label='', command=partial(self.parent.add_pending_insert, ''))
-            # insert_menu.add_command(label='', command=partial(self.parent.add_pending_insert, ''))
-            # insert_menu.add_command(label='', command=partial(self.parent.add_pending_insert, ''))
-            # insert_menu.add_command(label='', command=partial(self.parent.add_pending_insert, ''))
-            # insert_menu.add_command(label='', command=partial(self.parent.add_pending_insert, ''))
+
+            for i in ss.dict_entities.keys():
+                insert_menu.add_command(label=i, command=partial(self.parent.add_pending_insert, i))
 
             file_menu.add_command(label='Exit', command=self.root.quit, accelerator='Ctrl+Q')
             menubar.add_cascade(label='File', menu=file_menu)
@@ -251,20 +239,20 @@ class LifeGame:
 
         self.gui.render_board(sparse=False)
 
-    def add_pending_insert(self, entiy_name):
-        self.pending_insert_seed = ss.get_entity(entiy_name)
+    def add_pending_insert(self, entity_name):
+        self.pending_insert_seed = ss.dict_entities[entity_name]
         self.pending_insert = True # When the user selects an item to insert, flag this as True and store the item seed in pending_insert_seed
         self.gui.lbl_pending_insert.config(text='Click on a cell to place the object, or Esc to cancel')
         
     def seed_game(self, seed_name):
         self.clear_simulation()
 
-        self.seed = ss.get_seed(seed_name)
+        self.seed = ss.dict_seeds[seed_name]
         self.parse_seed_val(self.seed)
 
 if __name__ == '__main__':    
     game_of_life = LifeGame(rows=25, cols=40)
-    game_of_life.seed_game('Pulsar')
+    game_of_life.seed_game('Pulsars')
     
     game_of_life.gui.root.mainloop()
 
