@@ -1,6 +1,6 @@
 # Provides a list of options for life.py
 # Each line of the string represent a single row on the board, with 1 === alive and 0 === dead
-# Expected format is a multiline string, where the first line is discarded and subsequent lines begin with no indentation. Place the end quotes on their own, otherwise empty line.
+# Expected format is a multiline string, where the first line is discarded and subsequent lines begin with no indentation. Place the end quotes on their own, otherwise empty, line.
 
 dict_seeds = {} # Potentially more complex combos of pieces. Selecting one completely resets the simulation
 dict_entities = {} # Pieces that can be added to an existing simulation by the user
@@ -117,4 +117,21 @@ dict_entities['Gosper Glider Gun'] = '''
 000000000010000010000000100000000000
 000000000001000100000000000000000000
 000000000000110000000000000000000000
+'''
+
+dict_entities['Bi-pond Generator'] = '''
+00000000110
+00001000101
+00000100100
+00011100000
+00000000000
+00000000000
+00000000000
+00000000000
+00000000000
+00000000000
+00000000000
+01000000000
+01100000000
+10100000000
 '''

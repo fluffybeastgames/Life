@@ -74,9 +74,16 @@ class LifeGame:
             self.button.config(bg=bg)
 
         def get_neighbor_count(self):
+            # Calculate the number of immediate neighbors to this cell. If gui.wrap_board, then treat the eg left and right edges as neighbors of each other.
+
             r = self.row
             c = self.col
-            neighbors = [(r-1, c-1), (r-1, c), (r-1, c+1), (r, c-1), (r, c+1), (r+1, c-1), (r+1, c), (r+1, c+1)]
+            r_up    = r - 1 if r > 0 or not self.parent.gui.wrap_board.get() else self.parent.rows - 1
+            r_down  = r + 1 if r < self.parent.rows - 1 or not self.parent.gui.wrap_board.get() else 0
+            c_left  = c - 1 if c > 0 or not self.parent.gui.wrap_board.get() else self.parent.cols - 1
+            c_right = c + 1 if c < self.parent.cols - 1 or not self.parent.gui.wrap_board.get() else 0 
+        
+            neighbors = [(r_up, c_left), (r_up, c), (r_up, c_right), (r, c_left), (r, c_right), (r_down, c_left), (r_down, c), (r_down, c_right)]
 
             count = 0
             for n in neighbors:
@@ -136,9 +143,12 @@ class LifeGame:
             self.speed_val = tk.IntVar()
             self.speed_val.set(3)
             self.lbl_pending_insert = tk.Label(master = self.controls_frame, text='', font='Arial 16 italic')
-            
             lbl_slider_speed = tk.Label(master=self.controls_frame, text='Speed', font= 'Arial 14 bold')
             self.slider_speed = tk.Scale(master=self.controls_frame, from_=5, to=1,var=self.speed_val, command=self.parent.adjust_game_speed)
+            
+            self.wrap_board = tk.IntVar()
+            self.wrap_board.set(1)
+            self.check_wrap_board = tk.Checkbutton(master=self.controls_frame, text='Wrap Board', variable=self.wrap_board)
 
             self.lbl_turn.grid(row=0, column=0, padx=10)
             self.btn_start_pause.grid(row=0, column=1, padx=10)
@@ -146,6 +156,8 @@ class LifeGame:
             self.btn_clear.grid(row=0, column=3, padx=10)
             lbl_slider_speed.grid(row=0, column=4, padx=(10,0))
             self.slider_speed.grid(row=0, column=5, padx=(0,10))
+            self.check_wrap_board.grid(row=0, column=6, padx=10)
+            
             self.lbl_pending_insert.grid(row=1, column=1, columnspan=6, padx=10)
 
             self.controls_frame.grid(row=0, column=0, padx=30, pady=30)        
@@ -226,16 +238,20 @@ class LifeGame:
         self.gui.render_board(sparse=False)
                 
     def parse_seed_val(self, seed_val, offset_r=0, offset_c=0):
-    # TODO preemptively check if we have enough space to plop this down before starting, otherwise we'll end up with a partially drawn object
-    
-        row_num = -1 # because 0-indexed arrays
-        for row in seed_val.splitlines()[1:]: # ignore the first, blank line
-            row_num += 1
-            col_num = -1 # because 0-indexed arrays
-            for col in row:
-                col_num += 1
-                if int(col) > 0: 
-                    self.board[offset_r+row_num][offset_c+col_num].alive = True
+        rows_of_text = seed_val.splitlines()[1:]
+        
+        # Check if we have enough room to place the object
+        if offset_r + len(rows_of_text) > self.rows or offset_c + len(rows_of_text[0]) > self.cols:
+            messagebox.showerror(title='Out of Range', message='Not enough room to place object!') 
+        else:
+            row_num = -1 # because 0-indexed arrays
+            for row in rows_of_text: # ignore the first, blank line
+                row_num += 1
+                col_num = -1 # because 0-indexed arrays
+                for col in row:
+                    col_num += 1
+                    if int(col) > 0: 
+                        self.board[offset_r+row_num][offset_c+col_num].alive = True
 
         self.gui.render_board(sparse=False)
 
